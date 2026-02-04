@@ -2,12 +2,12 @@ package log_rotating;
 
 import java.io.File;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LogRotateTest {
-    private static final Logger logger = LogManager.getLogger(LogRotateTest.class);
-    private static final Logger audit = LogManager.getLogger("audit"); 
+    private static final Logger logger = LoggerFactory.getLogger(LogRotateTest.class);
+    private static final Logger audit = LoggerFactory.getLogger("audit"); 
 
     public static void main(String[] args) {
     	
@@ -25,10 +25,9 @@ public class LogRotateTest {
         
        
         for (int i = 1; i <= 15000; i++) {
-            logger.info("APP 검증 데이터 기록 중... 번호: {} | 현재 크기: {} bytes");
-            logger.error("error 데이터 기록 중.. 번호: {} | 256KB 롤링 및 2개 유지 정책 검증", i);
-            audit.info("AUDIT: login userId=kim ip=1.2.3.4 result=SUCCESS");
-        	audit.info("AUDIT: permission-change userId=admin target=kim role=USER->ADMIN");
+            logger.info("APP 검증 데이터 기록 중... 번호: {} | 현재 크기: {} bytes",i, app.getActiveLog().length());
+            logger.error("ERROR 데이터 기록 중... 번호: {} | 현재 크기: {} bytes", i, error.getActiveLog().length());
+            audit.info("AUDIT 데이터 기록 중... 번호: {} | 현재 크기: {} bytes", i, auditLog.getActiveLog().length());
             
             detectRolling(app);
             detectRolling(error);
