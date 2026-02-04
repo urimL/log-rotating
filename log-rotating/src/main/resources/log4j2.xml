@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="INFO">
+    <Properties>
+        <Property name="LOG_DIR">logs</Property>
+        <Property name="APP_NAME">app</Property>
+    </Properties>
+
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
+        </Console>
+
+        <RollingFile name="RollingFile" 
+                     fileName="${LOG_DIR}/${APP_NAME}.log"
+                     filePattern="${LOG_DIR}/archived/${APP_NAME}-%d{yyyyMMdd-HHmmss}-%i.log.gz" ignoreExceptions="true">
+            
+            <PatternLayout pattern="%d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %-5level %logger - %msg%n"/>
+            
+            <Policies>
+                <SizeBasedTriggeringPolicy size="50 KB" />
+            </Policies>
+           
+            <Delete basePath="${LOG_DIR}/archived" maxDepth="1">
+                <IfAccumulatedFileCount exceeds="2" />
+            </Delete>
+        </RollingFile>
+    </Appenders>
+
+    <Loggers>
+        <Root level="info">
+            <AppenderRef ref="Console"/>
+            <AppenderRef ref="RollingFile"/>
+        </Root>
+    </Loggers>
+</Configuration>
