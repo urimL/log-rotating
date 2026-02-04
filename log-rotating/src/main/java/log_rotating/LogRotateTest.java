@@ -7,7 +7,6 @@ public class LogRotateTest {
 	private static final Logger logger = LogManager.getLogger(LogRotateTest.class);
 	private static final Logger audit = LogManager.getLogger("audit"); 
 
-
 	public static void main(String[] args) {
 		System.out.println(">>> [Log4j2] 로테이팅 테스트 시작");
 

@@ -3,7 +3,7 @@
 
 	<Properties>
 		<Property name="LOG_DIR">logs</Property>
-		<Property name="MAX_SIZE">256KB</Property>
+		<Property name="MAX_SIZE">50KB</Property>
 		<Property name="APP_MAX_FILES">2</Property>
 		<Property name="ERROR_MAX_FILES">3</Property>
 		<Property name="AUDIT_MAX_FILES">4</Property>
