@@ -10,37 +10,29 @@ public class LogRotateTest {
     private static final Logger audit = LogManager.getLogger("audit"); 
 
     public static void main(String[] args) {
-    	File logFile = new File("logs/app.log");
-    	long lastSize = 0;
-    	long rotationStartTime = 0;
+    	
+    	RollingTarget app = new RollingTarget(
+                "APP", "logs/app/app.log", "logs/app/archived");
+
+        RollingTarget error = new RollingTarget(
+                "ERROR", "logs/error/error.log", "logs/error/archived");
+
+        RollingTarget auditLog = new RollingTarget(
+                "AUDIT", "logs/audit/audit.log", "logs/audit/archived");
+
     	
         System.out.println(">>> [Log4j2] 로테이팅 테스트 시작");
         
-        for (int i = 1; i <= 8000; i++) {
-			if (i % 4 == 1)
-				logger.info("info 데이터 기록 중... 번호: {} | 256KB 롤링 및 2개 유지 정책 검증", i);
-			else if (i % 4 == 2)
-				logger.error("error 데이터 기록 중.. 번호: {} | 256KB 롤링 및 2개 유지 정책 검증", i);
-			else if (i % 4 == 3)
-				logger.warn("warn 데이터 기록 중.. 번호: {} | 256KB 롤링 및 2개 유지 정책 검증", i);
-			else
-				audit.info("AUDIT: login userId=kim ip=1.2.3.4 result=SUCCESS");
-	        	audit.info("AUDIT: permission-change userId=admin target=kim role=USER->ADMIN");
-        }
-
+       
         for (int i = 1; i <= 15000; i++) {
-            logger.info("압축 검증 데이터 기록 중... 번호: {} | 현재 크기: {} bytes", i, logFile.length());
+            logger.info("APP 검증 데이터 기록 중... 번호: {} | 현재 크기: {} bytes");
+            logger.error("error 데이터 기록 중.. 번호: {} | 256KB 롤링 및 2개 유지 정책 검증", i);
+            audit.info("AUDIT: login userId=kim ip=1.2.3.4 result=SUCCESS");
+        	audit.info("AUDIT: permission-change userId=admin target=kim role=USER->ADMIN");
             
-            long currentSize = logFile.length();
-            
-            if (currentSize < lastSize && lastSize > 0) {
-            	rotationStartTime = System.currentTimeMillis();
-            	System.out.println("\n[!] 롤링 포착: " + rotationStartTime);
-            	
-            	checkGzipTime(rotationStartTime);
-            }
-            
-            lastSize = currentSize;
+            detectRolling(app);
+            detectRolling(error);
+            detectRolling(auditLog);
             
             try { Thread.sleep(1); } catch (InterruptedException e) {}
             
@@ -50,8 +42,28 @@ public class LogRotateTest {
         System.out.println(">>> 테스트 종료! logs 폴더를 새로고침(F5) 하세요.");
     }
     
-    private static void checkGzipTime(long startTime) {
-        File archivedDir = new File("logs/archived");
+    
+    private static void detectRolling(RollingTarget target) {
+
+        long currentSize = target.getActiveLog().length();
+        long lastSize = target.getLastSize();
+
+        if (currentSize > 0 && lastSize > 0 && currentSize < lastSize) {
+
+            long rotationTime = System.currentTimeMillis();
+            System.out.println("\n[!] " + target.getName() + " 롤링 포착");
+
+            checkGzipTime(
+                    target.getArchivedDir(),
+                    rotationTime,
+                    target.getName()
+            );
+        }
+
+        target.updateLastSize(currentSize);
+    }
+    
+    private static void checkGzipTime(File archivedDir, long startTime, String name) {
         
         long timeout = 3000; // 최대 3초 대기
         long startWait = System.currentTimeMillis();

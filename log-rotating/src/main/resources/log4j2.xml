@@ -103,12 +103,16 @@
 		</RollingFile>
 	</Appenders>
 
+	<!-- AUDIT 전용 Logger -->
+	<Logger name="audit" level="info" additivity="false">
+      <AppenderRef ref="AUDIT_FILE"/>
+    </Logger>
+    
 	<Loggers>
 		<Root level="debug">
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="APP_FILE" />
 			<AppenderRef ref="ERROR_FILE" />
-			<AppenderRef ref="AUDIT_FILE" />
 		</Root>
 	</Loggers>
 
