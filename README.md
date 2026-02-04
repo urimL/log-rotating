@@ -74,7 +74,7 @@
       long rotationTime = System.currentTimeMillis();
   }
   ```
-  ![alt text](image.png)
+  ![alt text]([image.png](https://github.com/user-attachments/assets/8ef7165a-e8ed-4b4c-b95b-54ab762525a5))
 
 > ### 3-3. 데이터 Archive
 
@@ -84,7 +84,7 @@
 - Warm (Archived): 최근 발생한 `.gz` 압축 파일.
 - Cold (Deleted): 생성 후 2초(시연 설정) 경과 시 별도의 `deleted/` 폴더로 자동 이관.
 
-  ![alt text](image-1.png)
+  ![alt text]([image-1.png](https://github.com/user-attachments/assets/c87fb07f-1a6f-437b-bb95-dcd7f871fc36))
 
 <br />
 
