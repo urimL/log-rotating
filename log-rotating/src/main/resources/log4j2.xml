@@ -9,7 +9,8 @@
 		<Property name="AUDIT_MAX_FILES">4</Property>
 
 		<!-- naming pattern -->
-		<Property name="APP_PATTERN">${LOG_DIR}/app/archived/app-%d{yyyy-MM-dd_HH-mm}.%i.log.gz</Property>
+		<Property name="APP_PATTERN">${LOG_DIR}/app/archived/app-%d{yyyy-MM-dd_HH-mm}.%i.log.gz
+		</Property>
 
 		<Property name="ERROR_PATTERN">${LOG_DIR}/error/archived/error-%d{yyyy-MM-dd_HH-mm}.%i.log.gz
 		</Property>
@@ -46,8 +47,7 @@
 			<DefaultRolloverStrategy fileIndex="min">
 				<Delete basePath="${LOG_DIR}/app/archived" maxDepth="1">
 					<IfFileName glob="app-*.log.gz" />
-					<IfAccumulatedFileCount
-						exceeds="${APP_MAX_FILES}" />
+					<IfLastModified age="10s"/>
 				</Delete>
 			</DefaultRolloverStrategy>
 		</RollingFile>
@@ -75,12 +75,11 @@
 			<DefaultRolloverStrategy fileIndex="min">
 				<Delete basePath="${LOG_DIR}/error/archived" maxDepth="1">
 					<IfFileName glob="error-*.log.gz" />
-					<IfAccumulatedFileCount
-						exceeds="${ERROR_MAX_FILES}" />
+					<IfLastModified age="1m"/>
 				</Delete>
 			</DefaultRolloverStrategy>
 		</RollingFile>
-		
+
 		<!-- AUDIT -->
 		<RollingFile name="AUDIT_FILE" createOnDemand="true"
 			fileName="${LOG_DIR}/audit/audit.log" filePattern="${AUDIT_PATTERN}">
@@ -96,19 +95,19 @@
 			<DefaultRolloverStrategy fileIndex="min">
 				<Delete basePath="${LOG_DIR}/audit/archived" maxDepth="1">
 					<IfFileName glob="audit-*.log.gz" />
-					<IfAccumulatedFileCount
-						exceeds="${AUDIT_MAX_FILES}" />
+					<IfLastModified age="1m"/>
 				</Delete>
 			</DefaultRolloverStrategy>
 		</RollingFile>
 	</Appenders>
 
-	<!-- AUDIT 전용 Logger -->
-	<Logger name="audit" level="info" additivity="false">
-      <AppenderRef ref="AUDIT_FILE"/>
-    </Logger>
-    
 	<Loggers>
+		<!-- AUDIT 전용 Logger -->
+		<Logger name="audit" level="info" additivity="false">
+			<AppenderRef ref="AUDIT_FILE" />
+			<AppenderRef ref="Console" />
+		</Logger>
+
 		<Root level="debug">
 			<AppenderRef ref="Console" />
 			<AppenderRef ref="APP_FILE" />
