@@ -65,6 +65,8 @@
 
 - 각 로그 파일이 50KB 도달 시 즉시 롤링 및 Gzip(.gz) 압축 수행
 
+	<img width="916" height="525" alt="image" src="https://github.com/user-attachments/assets/8bd4604e-f09f-48d6-b070-cf7cbf81e79a" />
+
 #### 검증
 
 - 압축 프로세스가 1초 이내에 완료되는지 실시간 측정.
@@ -74,7 +76,8 @@
       long rotationTime = System.currentTimeMillis();
   }
   ```
-  ![alt text]([image.png](https://github.com/user-attachments/assets/8ef7165a-e8ed-4b4c-b95b-54ab762525a5))
+  
+
 
 > ### 3-3. 데이터 Archive
 
@@ -84,7 +87,8 @@
 - Warm (Archived): 최근 발생한 `.gz` 압축 파일.
 - Cold (Deleted): 생성 후 2초(시연 설정) 경과 시 별도의 `deleted/` 폴더로 자동 이관.
 
-  ![alt text]([image-1.png](https://github.com/user-attachments/assets/c87fb07f-1a6f-437b-bb95-dcd7f871fc36))
+ <img width="735" height="275" alt="image" src="https://github.com/user-attachments/assets/354e1263-adae-47d0-97fc-2d0de9183b6c" />
+
 
 <br />
 
