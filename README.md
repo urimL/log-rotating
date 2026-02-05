@@ -67,6 +67,9 @@
 
 	<img width="916" height="525" alt="image" src="https://github.com/user-attachments/assets/8bd4604e-f09f-48d6-b070-cf7cbf81e79a" />
 
+	
+	<img width="245" height="337" alt="image" src="https://github.com/user-attachments/assets/c43bcaa0-64a6-4500-afde-088b9b9d973d" />
+
 #### 검증
 
 - 압축 프로세스가 1초 이내에 완료되는지 실시간 측정.
