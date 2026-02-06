@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="INFO">
     <Properties>
-        <Property name="LOG_DIR">logs</Property>
+        <Property name="LOG_DIR">${sys:LOG_DIR:-logs}</Property>
         <Property name="MAX_SIZE">50KB</Property>
         <Property name="APP_PATTERN">${LOG_DIR}/app/archived/app-%d{yyyy-MM-dd_HH-mm}.%i.log.gz</Property>
         <Property name="ERROR_PATTERN">${LOG_DIR}/error/archived/error-%d{yyyy-MM-dd_HH-mm}.%i.log.gz</Property>
