@@ -80,7 +80,7 @@ public class LogRotateTest {
         }
     }
 
-    private static void moveToDeleteFolder(RollingTarget target) {
+    public static void moveToDeleteFolder(RollingTarget target) {
         File archivedDir = target.getArchivedDir();
         File deleteDir = new File(archivedDir.getParent(), "deleted");
         if (!deleteDir.exists()) deleteDir.mkdirs();
