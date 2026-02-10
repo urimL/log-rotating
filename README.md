@@ -130,4 +130,6 @@ AUDIT 로그를 별도 관리하여 보안 사고 시 무결성 있는 증적 �
 ## 6. Jacoco 실행 결과
 <img width="1227" height="332" alt="Jacoco result" src="https://github.com/user-attachments/assets/baf6ee16-e36e-45a1-a0eb-5ddd0f828e53" />
 
-
+### 테스트 커버리지 전략
+`detectRolling`과 같은 순수 Java 로직은 파일 크기 변화, 시간 조건 등을 직접 제어할 수 있으므로 단위 테스트로 100% 커버리지를 확보하였다.
+반면, 나머지 Log4j2 XML 설정에 의해 동작하는 영역은 분기 커버리지를 측정하는 것이 구조적으로 불가능하므로 위와 같은 결과가 나왔다.
