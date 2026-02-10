@@ -126,3 +126,8 @@ AUDIT 로그를 별도 관리하여 보안 사고 시 무결성 있는 증적 �
 > ### 비용 최적화 운영
 
 운영 서버 자원을 효율적으로 사용하면서도 과거 데이터 보존 가능
+
+## 6. Jacoco 실행 결과
+<img width="1227" height="332" alt="Jacoco result" src="https://github.com/user-attachments/assets/baf6ee16-e36e-45a1-a0eb-5ddd0f828e53" />
+
+
