@@ -2,6 +2,7 @@ package log_rotating;
 
 import static org.junit.jupiter.api.Assertions.assertAll;
 import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.io.ByteArrayOutputStream;
@@ -13,8 +14,12 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.io.TempDir;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -151,7 +156,7 @@ class LogRotateTestTest {
 	        () -> assertFalse(err.contains(infoMsg)),
 	        () -> assertTrue(err.contains(warnMsg)),
 	        () -> assertTrue(err.contains(errorMsg)),
-	        () -> assertFalse(err.contains(auditMsg))   // ✅ 오타 수정
+	        () -> assertFalse(err.contains(auditMsg))
 	    );
 
 	    // audit.log: audit만 있어야 함 (additivity=false 전제)
@@ -161,5 +166,74 @@ class LogRotateTestTest {
 	        () -> assertFalse(audit.contains(warnMsg)),
 	        () -> assertFalse(audit.contains(errorMsg))
 	    );
+	}
+	
+    @AfterEach
+    void tearDown() {
+        LogManager.shutdown();
+    }
+
+    @Test
+    @DisplayName("50KB 초과 시 archived 폴더에 .gz 파일이 생성되는지 확인")
+    void testGzipFileExists(@TempDir Path tempDir) throws InterruptedException {
+        System.setProperty("LOG_DIR", tempDir.toString());
+        
+        LoggerContext context = (LoggerContext) LogManager.getContext(false);
+        context.reconfigure();
+        
+        Logger logger = LoggerFactory.getLogger(LogRotateTestTest.class);
+        
+        File archivedDir = tempDir.resolve("app/archived").toFile();
+
+        for (int i = 0; i < 10000; i++) {
+            logger.info("롤링 테스트 데이터 기록 중... 번호: " + i);
+        }
+
+        Thread.sleep(2500); 
+
+        File[] files = archivedDir.listFiles((dir, name) -> name.endsWith(".gz"));
+
+        assertNotNull(files, "archived 폴더가 생성되지 않았습니다.");
+        assertTrue(files.length > 0, "실제 .gz 압축 파일이 생성되지 않았습니다.");
+        
+        System.out.println("드디어 성공! 생성 경로: " + archivedDir.getAbsolutePath());
+        System.out.println("생성된 파일: " + files[0].getName());
+    }
+    
+	@TempDir
+	File tempDir;
+
+	@Test
+	@DisplayName("2초가 지난 후 archived -> deleted로 파일이 이동되어야 한다")
+	// Files.write() 메소드는 내부적으로 IOException을 발생시킬 수 있는 메소드이기 때문에 예외처리 추가
+	void test1() throws Exception {
+
+		// --- given ---
+		File archivedDir = new File(tempDir, "archived");
+		archivedDir.mkdirs();
+
+		File deletedDir = new File(tempDir, "deleted");
+		
+		File gzFile = new File(archivedDir, "test.log.gz");
+		
+		Files.write(gzFile.toPath(), "test".getBytes());
+
+		// move 조건이 '2초 초과'이므로 확실한 이동 대상이 되도록, 3초 전에 만들어진 파일로 보이게끔 수정시간 변경
+		gzFile.setLastModified(System.currentTimeMillis() - 3000);
+
+		RollingTarget target = new RollingTarget("TEST", "", archivedDir.getAbsolutePath());
+
+		
+		// --- when ---
+		LogRotateTest.moveToDeleteFolder(target);
+
+		
+		// --- then ---
+		File movedFile = new File(deletedDir, "test.log.gz");
+
+		assertAll(() -> {
+			assertFalse(gzFile.exists());
+			assertTrue(movedFile.exists());
+		});
 	}
 }
